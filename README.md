@@ -23,27 +23,53 @@
 ```
 crypto-short-strategy/
 ├── README.md
-├── data/                    # 数据说明
+├── data/                         # 数据说明
 │   └── README.md
-├── scripts/                  # 分析脚本
-│   ├── full_ic_ir_analysis.py       # 完整IC/IR分析 (13因子, 2021-2026)
-│   ├── short_strat_analysis.py       # 做空策略专项分析
-│   └── chan_quant/                   # 缠论量化模块 (子项目)
-└── reports/                  # 研究报告
+├── scripts/                      # 分析脚本（按版本演进）
+│   ├── factor_ic_ir_analysis_v2.py   # 实验版本
+│   ├── factor_ic_ir_analysis_v3.py   # 实验版本
+│   ├── factor_ic_ir_analysis_v4.py   # 实验版本
+│   ├── factor_ic_ir_analysis_v5.py   # 实验版本
+│   ├── factor_ic_ir_analysis_v6.py   # 实验版本
+│   ├── factor_ic_ir_analysis_v7.py   # 最后一个实验版本
+│   ├── full_ic_ir_analysis.py         # ✅ 最终版：完整IC/IR分析（13因子, 2021-2026）
+│   └── short_strat_analysis.py         # ✅ 最终版：做空策略专项（FR×Vol复合因子）
+├── results/                       # 分析结果数据
+│   ├── full_ic_stats_24h.csv          # 24h窗口 IC统计
+│   ├── full_ic_stats_72h.csv           # 72h窗口 IC统计
+│   └── monthly_ic_v7.csv              # 月度IC序列
+└── reports/                       # 研究报告
     └── README.md
 ```
+
+## 📝 脚本演进说明
+
+项目经历了多次迭代，以下是各版本的演进记录：
+
+| 版本 | 文件 | 主要改动 |
+|------|------|----------|
+| v2 | `factor_ic_ir_analysis_v2.py` | 引入 IC 加权相对收益计算 |
+| v3 | `factor_ic_ir_analysis_v3.py` | 优化分组回测逻辑 |
+| v4 | `factor_ic_ir_analysis_v4.py` | 增加月度 IC 序列输出 |
+| v5 | `factor_ic_ir_analysis_v5.py` | 因子稳定性修复 |
+| v6 | `factor_ic_ir_analysis_v6.py` | 年化收益计算修复（几何平均） |
+| v7 | `factor_ic_ir_analysis_v7.py` | IC 分档多空组合计算 |
+| **最终版** | `full_ic_ir_analysis.py` | 完整 13 因子、2021-2026 全量数据、24h/72h 双窗口 |
+| **最终版** | `short_strat_analysis.py` | FR×Vol 复合因子、2×2 分组、做空择时分析 |
+
+> **建议直接使用 `full_ic_ir_analysis.py` 和 `short_strat_analysis.py`**，v2-v7 为中间实验记录，保留用于追溯实验过程。
 
 ## 🔬 数据概况
 
 - **来源**：Binance 永续合约 (USDT本位)
 - **时间跨度**：2021-01 ~ 2026-03
-- **币种数量**：634 个币种（K线 + 资金费率 + 链上数据三数据源交集）
+- **币种数量**：634 个币种（K线 + 资金费率 + 链上数据三数据源交集），分析使用 Top 80
 - **分析粒度**：日频截面数据
 - **数据字段**：收盘价、成交量、资金费率、taker买卖流量、链上流通量
 
 ## 📈 主要分析结果
 
-### 1. IC/IR 总体统计
+### 1. IC/IR 总体统计（最终版）
 
 ```
 因子          IC_mean   IC_IR    IC>0占比
@@ -90,13 +116,17 @@ conda activate crypto_short
 pip install pandas numpy scipy matplotlib seaborn
 ```
 
-## 📝 研究阶段记录
+> 推荐使用 conda 环境：`/home/xisang/miniconda3/envs/a-trade`
 
-| 阶段 | 时间 | 内容 |
-|------|------|------|
-| v1-v7 | 2026-04 | 因子IC/IR基础实验 |
-| v8 | 2026-04 | 完整2021-2026 IC分析 |
-| v9 | 2026-04 | 资金费率×波动率复合因子验证 |
+## 📋 运行脚本
+
+```bash
+# 完整 IC/IR 分析（24h 窗口）
+python full_ic_ir_analysis.py
+
+# 做空策略专项分析
+python short_strat_analysis.py
+```
 
 ## ⚖️ 免责声明
 
